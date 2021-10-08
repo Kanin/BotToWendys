@@ -1,0 +1,11 @@
+chrome_path: /usr/bin/brave
+driver_path: /home/kanin/Documents/Projects/PyCharm/BotToWendys/chromedriver
+
+discord_webhook: https://canary.discord.com/api/webhooks/895822164790476861/_sUDd070hXWkzJNVpwA0hI0KKWo3AfLb2FMThRgJ7PbMc2vf8X0FhH02O61Aijk4_EfP
+
+store_number: 7903
+
+why_satisfied:
+  - Everything was perfectly cooked, proportioned, and the staff was super friendly!
+  - Everything was fantastic
+  - Meal was made to perfection and staff were wonderful
