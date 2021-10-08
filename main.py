@@ -15,6 +15,7 @@ def complete_survey():
 
     options = Options()
     options.binary_location = config["chrome_path"]
+    options.add_argument("--headless")
     browser = webdriver.Chrome(config["driver_path"], options=options)
     browser.get("https://www.wendyswantstoknow.com/")
 
