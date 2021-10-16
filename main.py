@@ -1,5 +1,6 @@
 import random
-from datetime import datetime
+from itertools import cycle
+from time import sleep
 
 import yaml
 import requests
@@ -8,14 +9,18 @@ from selenium.webdriver.chrome.options import Options
 
 with open("config.yml", "r") as user_config:
     config = yaml.safe_load(user_config)
+    cycled_names = cycle(config["names"])
+
+# with open("proxies.yml", "r") as proxy_list:
+#     proxies = yaml.safe_load(proxy_list)["proxies"]
+#     cycled_proxies = cycle(proxies)
 
 
-def complete_survey():
-    now = datetime.now()
-
+def complete_survey(hour, minute, meridian, staff_name):
     options = Options()
     options.binary_location = config["chrome_path"]
-    options.add_argument("--headless")
+    # options.add_argument(f"--proxy-server={next_proxy}")
+    # options.add_argument("--headless")
     browser = webdriver.Chrome(config["driver_path"], options=options)
     browser.get("https://www.wendyswantstoknow.com/")
 
@@ -31,16 +36,16 @@ def complete_survey():
     today = browser.find_element_by_class_name("ui-datepicker-today")
     today.click()
 
-    hour = browser.find_element_by_id("InputHour")
-    current_hour = hour.find_element_by_css_selector(f"""option[value='{now.strftime("%I")}']""")
+    hour_element = browser.find_element_by_id("InputHour")
+    current_hour = hour_element.find_element_by_css_selector(f"""option[value='{hour}']""")
     current_hour.click()
 
-    minute = browser.find_element_by_id("InputMinute")
-    current_minute = minute.find_element_by_css_selector(f"""option[value='{now.strftime("%M")}']""")
+    minute_element = browser.find_element_by_id("InputMinute")
+    current_minute = minute_element.find_element_by_css_selector(f"""option[value='{minute}']""")
     current_minute.click()
 
-    meridian = browser.find_element_by_id("InputMeridian")
-    current_meridian = meridian.find_element_by_css_selector(f"""option[value='{now.strftime("%p")}']""")
+    meridian_element = browser.find_element_by_id("InputMeridian")
+    current_meridian = meridian_element.find_element_by_css_selector(f"""option[value='{meridian}']""")
     current_meridian.click()
 
     next_button = browser.find_element_by_id("NextButton")
@@ -297,6 +302,9 @@ def complete_survey():
     # Page 23
     ####################################################################################################################
 
+    staff_name_input = browser.find_element_by_id("S000042")
+    staff_name_input.send_keys(staff_name)
+
     next_button = browser.find_element_by_id("NextButton")
     next_button.click()
 
@@ -327,5 +335,23 @@ def complete_survey():
 
 
 if __name__ == "__main__":
+    # proxies = requests.get("https://advanced.name/freeproxy/61609f893ff70?type=https").content.split()
+    # cycled_proxies = cycle(proxies)
+    time_meridian = "AM"
+    time_hour = random.randint(7, 22)
+    if time_hour > 12:
+        time_hour = time_hour - 12
+        time_meridian = "PM"
+    time_hour = f"{time_hour:02}"
+
+    time_minute = random.randint(0, 59)
+    time_minute = f"{time_minute:02}"
     while True:
-        complete_survey()
+        name = next(cycled_names)
+        print(f"Completing survey for {name}")
+        try:
+            complete_survey(time_hour, time_minute, time_meridian, "Test")
+        except Exception as e:
+            print(e)
+            continue
+        sleep(10)
